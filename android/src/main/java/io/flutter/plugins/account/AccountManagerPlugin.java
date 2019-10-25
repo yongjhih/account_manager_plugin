@@ -1,15 +1,14 @@
-package com.example.account_manager_plugin;
+package io.flutter.plugins.account;
 
-import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.util.Log;
 import android.util.Patterns;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 //import android.support.v4.content.ContextCompat;
@@ -40,8 +39,8 @@ public class AccountManagerPlugin implements MethodCallHandler {
 
     @Override
     public void onMethodCall(MethodCall call, Result result) {
-        Context context = getContext();
-        Activity activity = getActivity();
+        Context context = context();
+        Activity activity = activity();
 
         switch (call.method) {
             case "getAllAccounts":
@@ -56,9 +55,9 @@ public class AccountManagerPlugin implements MethodCallHandler {
         }
     }
 
-    private ArrayList<String> getAllAccounts(Context context, Activity activity) {
+    private List<String> getAllAccounts(Context context, Activity activity) {
 
-        ArrayList<String> accounts = new ArrayList<>();
+        List<String> accounts = new ArrayList<>();
         AccountManager manager = (AccountManager) context.getSystemService(Context.ACCOUNT_SERVICE);
 
 //        if (ContextCompat.checkSelfPermission(context, Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED) {
@@ -74,15 +73,15 @@ public class AccountManagerPlugin implements MethodCallHandler {
                 for (Account account : list) {
                     accounts.add(account.name);
                 }
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 Log.e("Error:", e.getMessage());
             }
 
         return accounts;
     }
 
-    private ArrayList<String> getMailsAccounts(Context context) {
-        ArrayList<String> emails = new ArrayList<>();
+    private List<String> getMailsAccounts(Context context) {
+        List<String> emails = new ArrayList<>();
         Pattern mailPattern = Patterns.EMAIL_ADDRESS;
         Account[] accounts = AccountManager.get(context).getAccounts();
         for (Account account : accounts) {
@@ -93,12 +92,12 @@ public class AccountManagerPlugin implements MethodCallHandler {
         return emails;
     }
 
-    private Context getContext() {
+    private Context context() {
         return mRegistrar.context();
         //return (mRegistrar.activity() != null) ? mRegistrar.activity() : mRegistrar.context();
     }
 
-    private Activity getActivity() {
+    private Activity activity() {
         return mRegistrar.activity();
     }
 }
